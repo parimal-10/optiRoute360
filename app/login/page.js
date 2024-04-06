@@ -21,6 +21,7 @@ function Copyright(props) {
       color="black"
       align="center"
       {...props}
+      className="text-white"
     >
       {"Copyright © "}
       <Link color="inherit" href="https://mui.com/">
@@ -67,7 +68,7 @@ export default function Login() {
         fill={true}
         quality={100}
         style={{
-          opacity: 0.7,
+          opacity: 0.9,
           zIndex: -1
         }}
       />
@@ -121,12 +122,12 @@ export default function Login() {
           </Button>
           <Grid container>
             <Grid item xs>
-              <Link href="#" variant="body2" className="text-black decoration-black">
+              <Link href="#" variant="body2" className="text-white decoration-white">
                 Forgot password?
               </Link>
             </Grid>
             <Grid item>
-              <Link href="/signup" variant="body2" className="text-black decoration-black">
+              <Link href="/signup" variant="body2" className="text-white decoration-white">
                 Dont have an account? Sign Up
               </Link>
             </Grid>

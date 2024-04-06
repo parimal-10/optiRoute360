@@ -21,7 +21,7 @@ import Image from "next/image";
 
 function Copyright(props) {
   return (
-    <Typography variant="body2" color="black" align="center">
+    <Typography variant="body2" color="black" align="center" className="text-white">
       {"Copyright © "}
       <Link color="inherit" href="https://mui.com/">
         TaskHarbor
