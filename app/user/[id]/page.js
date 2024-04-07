@@ -38,6 +38,8 @@ export default function User() {
     lat: 0,
     lng: 0,
   });
+  const [selectedLoc, setSelectedLoc] = useState([]);
+  const [selectedLocName,setselectedLocName] = useState([]);
 
   const { isLoaded } = useJsApiLoader({
     id: "google-map-script",
@@ -86,11 +88,22 @@ export default function User() {
 
   const searchPlace = async () => {
     const res = await axios.post("/api/maps/search", { center, search });
-    console.log(res.data);
     setDropDown(res.data.results);
   };
+
+  function addLocation(loc) {
+    setSelectedLoc((prevLoc) => [...prevLoc, loc]);
+    setselectedLocName((prevLoc)=>[...prevLoc,loc.formatted_address])
+  }
+
+  const findDist = async()=>{
+    const res = await axios.post("/api/maps/distance",{selectedLocName});
+    console.log(res.data);
+  }
+
   return (
     <>
+    <button onClick={findDist}>FIND</button>
       <div className="flex flex-col gap-2">
         <Paper
           component="form"
@@ -131,7 +144,9 @@ export default function User() {
         {dropDown.length > 0 &&
           dropDown.map((loc, index) => (
             <div>
-              <Typography>{loc.formatted_address}</Typography>
+              <Typography onClick={() => addLocation(loc)}>
+                {loc.formatted_address}
+              </Typography>
             </div>
           ))}
       </div>
@@ -154,6 +169,13 @@ export default function User() {
         >
           {/* Child components, such as markers, info windows, etc. */}
           <></>
+          {selectedLoc.length > 0 &&
+            selectedLoc.map((loc, index) => (
+              <MarkerF
+                position={loc.geometry.location}
+                onLoad={() => console.log("Marker Loaded")}
+              />
+            ))}
           <MarkerF
             position={center}
             onLoad={() => console.log("Marker Loaded")}
@@ -161,6 +183,13 @@ export default function User() {
         </GoogleMap>
       ) : (
         <></>
+      )}
+      {selectedLoc.length > 0 && (
+        <div>
+          {selectedLoc.map((loc, index) => (
+            <Typography>{loc.formatted_address}</Typography>
+          ))}
+        </div>
       )}
     </>
   );
