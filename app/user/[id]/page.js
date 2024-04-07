@@ -20,7 +20,7 @@ import TextField from '@mui/material/TextField'
 export default function User() {
     const [time, setTime] = useState(dayjs());
     const [search, setSearch] = useState("");
-    const [locationData, setLocationData] = useState(null);
+    const [locationData, setLocationData] = useState("");
 
     const handleTimeChange = (newValue) => {
         setTime(newValue);
