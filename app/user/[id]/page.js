@@ -169,7 +169,7 @@ export default function User() {
                         {selectedLoc.length > 0 && (
                             <div>
                                 {selectedLoc.map((loc, index) => (
-                                    <div>
+                                    <div className="p-2">
                                         <Typography>{loc.name},{loc.formatted_address}</Typography>
                                         <div className="flex gap-2">
                                             <IconButton onClick={() => handleCheckOption(index)}>
@@ -179,6 +179,7 @@ export default function User() {
                                                 <DeleteIcon />
                                             </IconButton>
                                         </div>
+                                        <hr />
                                     </div>
                                 ))}
                             </div>
