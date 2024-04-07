@@ -17,13 +17,15 @@ import { GoogleMap, useJsApiLoader, MarkerF } from "@react-google-maps/api";
 import { Grid } from "@mui/material";
 import Checkbox from '@mui/material/Checkbox';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { useRouter } from "next/navigation";
 
 const containerStyle = {
     width: "1100px",
     height: "600px",
 };
 
-export default function User() {
+export default function User( { params } ) {
+    const router = useRouter();
     const [initialTime, setInitialTime] = useState(dayjs());
     const [search, setSearch] = useState("");
     const [dropDown, setDropDown] = useState([]);
@@ -73,7 +75,7 @@ export default function User() {
                 const loc = data.results[0];
                 setCenter({ lat, lng });
                 setLocationData(loc.formatted_address);
-                setSelectedLoc((prevLoc) => [...prevLoc, {isMandatory: false, loc}]);
+                setSelectedLoc((prevLoc) => [...prevLoc, { isMandatory: false, loc }]);
             })
             .catch((error) => {
                 console.error("Error getting current location:", error);
@@ -94,7 +96,7 @@ export default function User() {
     const findDist = async () => {
         const res = await axios.post("/api/maps/distance", { selectedLoc });
         localStorage.setItem('routeData', JSON.stringify(res.data));
-        router.push(`/newRoute`);
+        router.push(`${params.id}/result`);
     }
 
     function handleDelete(index) {
@@ -214,10 +216,8 @@ export default function User() {
                                     <MarkerF
                                         position={i.loc.geometry.location}
                                     />
-                                ))}
-                            <MarkerF
-                                position={center}
-                            />
+                                ))
+                            }
                         </GoogleMap>
                     ) : (
                         <></>
