@@ -13,7 +13,7 @@ import axios from "axios";
 import { getCurrentLocation } from "@/utils/getCurrentLocation";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
-import { GoogleMap, useJsApiLoader, MarkerF } from "@react-google-maps/api";
+import { GoogleMap, useJsApiLoader, MarkerF,DirectionsRenderer } from "@react-google-maps/api";
 import { Grid } from "@mui/material";
 import Checkbox from '@mui/material/Checkbox';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -34,6 +34,7 @@ export default function User( { params } ) {
         lat: 0,
         lng: 0,
     });
+    const [finalpath,setFinalPath] = useState([]);
     const [selectedLoc, setSelectedLoc] = useState([]);
 
     const { isLoaded } = useJsApiLoader({
@@ -93,13 +94,59 @@ export default function User( { params } ) {
         setDropDown([])
     }
 
+    const [directionResponse,setdirectionResponse] = useState(null);
+    const [distance,setDistance] = useState("");
+    async function calculateRoute() {
+        if (finalpath.length < 2) {
+            return;
+        }
+    
+        const directionsService = new google.maps.DirectionsService();
+        const directionsRenderer = new google.maps.DirectionsRenderer();
+        const directionsResponses = [];
+    
+        for (let i = 0; i < finalpath.length - 1; i++) {
+            const origin = finalpath[i];
+            const destination = finalpath[i + 1];
+    
+            const response = await new Promise((resolve, reject) => {
+                directionsService.route(
+                    {
+                        origin,
+                        destination,
+                        travelMode: google.maps.TravelMode.DRIVING
+                    },
+                    (response, status) => {
+                        if (status === "OK") {
+                            resolve(response);
+                        } else {
+                            reject(new Error("Directions request failed due to " + status));
+                        }
+                    }
+                );
+            });
+    
+            directionsResponses.push(response);
+        }
+    
+        setdirectionResponse(directionsResponses);
+    }
+    
+    
+
     const findDist = async () => {
         const res = await axios.post("/api/maps/distance", { selectedLoc });
         //const place_id = selectedLoc.loc.place_id;
         //const res2 = await axios.post("/api/maps/details",{selectedLoc});
-        //console.log(selectedLoc)
+        console.log(res.data.nodes)
+        for(let x of res.data.nodes) {
+            //console.log(x);
+            setFinalPath((prev) => [...prev, x.name])
+        }
+        console.log(finalpath);
+        calculateRoute();
         localStorage.setItem('routeData', JSON.stringify(res.data));
-        router.push(`${params.id}/result`);
+       // router.push(`${params.id}/result`);
     }
 
     function handleDelete(index) {
@@ -113,6 +160,7 @@ export default function User( { params } ) {
             )
         );
     };
+    
 
     return (
         <>
@@ -214,6 +262,9 @@ export default function User( { params } ) {
                             onLoad={onLoad}
                             onUnmount={onUnmount}
                         >
+                            {directionResponse && directionResponse.map((response, index) => (
+        <DirectionsRenderer key={index} directions={response} />
+    ))}
                             {selectedLoc.length > 0 &&
                                 selectedLoc.map((i, index) => (
                                     <MarkerF
