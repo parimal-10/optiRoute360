@@ -1,3 +1,5 @@
+"use client"
+import { useState, useEffect } from 'react';
 import Image from "next/image";
 import Link from "next/link";
 
@@ -7,9 +9,27 @@ const links = [
 ]
 
 export default function Section1() {
+    const [scrolled, setScrolled] = useState(false);
+
+    // Effect to add/remove scroll event listener
+    useEffect(() => {
+        const handleScroll = () => {
+            const isScrolled = window.scrollY > 20;
+            if (isScrolled !== scrolled) {
+                setScrolled(isScrolled);
+            }
+        };
+
+        // Add event listener
+        window.addEventListener('scroll', handleScroll);
+
+        // Remove event listener on cleanup
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, [scrolled]);
+
     return (
         <>
-            <div className="fixed z-10 flex gap-5 ml-10 mt-5">
+            <div className={`fixed z-10 flex gap-5 ml-10 mt-5 ${scrolled ? 'bg-black' : ''}`}>
                 {links.map((link, index) => (
                     <Link key={index} href={link.href}>
                         <div className="text-white text-xl hover:underline decoration-white decoration-4 underline-offset-8">
@@ -18,7 +38,7 @@ export default function Section1() {
                     </Link>
                 ))}
             </div>
-            <div className="fixed z-10 flex gap-5 text-white text-xl mt-5 right-7">
+            <div className={`fixed z-10 flex gap-5 text-white text-xl mt-5 right-7 ${scrolled ? 'bg-black' : ''}`}>
                 <div>
                     <Link href="/login" className="hover:underline decoration-white decoration-4 underline-offset-8">
                         Login
