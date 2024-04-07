@@ -105,7 +105,7 @@ export async function POST(req) {
             throw new Error('Failed to fetch data from Google Distance Matrix API');
         }
         const data = await response.json();
-
+        //console.log(data);
         const nodes = [];
 
         const edges = [];

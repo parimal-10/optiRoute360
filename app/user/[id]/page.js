@@ -17,6 +17,7 @@ import { GoogleMap, useJsApiLoader, MarkerF } from "@react-google-maps/api";
 import { Grid } from "@mui/material";
 import Checkbox from '@mui/material/Checkbox';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { useRouter } from "next/navigation";
 
 const containerStyle = {
     width: "1100px",
@@ -24,6 +25,7 @@ const containerStyle = {
 };
 
 export default function User() {
+    const router = useRouter();
     const [initialTime, setInitialTime] = useState(dayjs());
     const [search, setSearch] = useState("");
     const [dropDown, setDropDown] = useState([]);
@@ -93,8 +95,11 @@ export default function User() {
 
     const findDist = async () => {
         const res = await axios.post("/api/maps/distance", { selectedLoc });
+        //const place_id = selectedLoc.loc.place_id;
+        //const res2 = await axios.post("/api/maps/details",{selectedLoc});
+        //console.log(selectedLoc)
         localStorage.setItem('routeData', JSON.stringify(res.data));
-        router.push(`/newRoute`);
+        //router.push(`/newRoute`);
     }
 
     function handleDelete(index) {
