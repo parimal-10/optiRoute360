@@ -1,14 +1,17 @@
-export async function GET(req) {
-    const mapUrl = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${req}&key=${process.env.NEXT_PUBLIC_MAP_API_KEY}`;
-
+import { NextResponse } from "next/server";
+export async function POST(req) {
     try {
+        const {search} = await req.json();
+        console.log(search);
+        const mapUrl = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${search}&key=${process.env.NEXT_PUBLIC_MAP_API_KEY}`;
         const response = await fetch(mapUrl);
         if (!response.ok) {
             throw new Error('Failed to fetch data from the Google Places Text Search API');
         }
         const data = await response.json();
         console.log(data); 
-        return data; 
+        //return data;
+        return NextResponse.json(data);
     } catch (error) {
         console.error('Error fetching data:', error);
         return null; 
