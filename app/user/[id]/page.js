@@ -14,14 +14,22 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { MobileTimePicker } from '@mui/x-date-pickers/MobileTimePicker';
 import { useState, useEffect } from 'react'
 import axios from 'axios' 
+import { getCurrentLocation } from '@/utils/getCurrentLocation';
+import TextField from '@mui/material/TextField'
 
 export default function User() {
     const [time, setTime] = useState(dayjs());
     const [search, setSearch] = useState("");
+    const [locationData, setLocationData] = useState(null);
 
     const handleTimeChange = (newValue) => {
         setTime(newValue);
     };
+
+    function handleCurrLocation(e) {
+        e.preventDefault();
+        setLocationData(e.target.value)
+    }
 
     const handleSearchChange = (e) => {
         setSearch(e.target.value); 
@@ -31,6 +39,16 @@ export default function User() {
         const data =await axios.post("/api/maps/search",{search});
     }
 
+    useEffect(()=>{
+        getCurrentLocation()
+            .then(data => {
+                setLocationData(data.results[0].formatted_address);
+            })
+            .catch(error => {
+                console.error('Error getting current location:', error);
+            });
+    },[]);
+    console.log(locationData);
     return (
         <>
             <Paper
@@ -55,6 +73,7 @@ export default function User() {
                     <DirectionsIcon />
                 </IconButton>
             </Paper>
+            <TextField id="filled-basic" label="Initial Location" variant="filled" value={locationData} onChange={handleCurrLocation} />
             <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <MobileTimePicker
                     value={time}
