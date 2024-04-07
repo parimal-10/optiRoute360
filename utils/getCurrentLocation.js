@@ -15,7 +15,7 @@ export async function getCurrentLocation() {
             throw new Error('Failed to fetch data from reverse geocoding API');
           }
           const data = await response.json();
-          resolve(data);
+          resolve({position,data});
         } catch (error) {
           reject(error);
         }
