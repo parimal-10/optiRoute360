@@ -24,7 +24,7 @@ const containerStyle = {
     height: "600px",
 };
 
-export default function User() {
+export default function User( { params } ) {
     const router = useRouter();
     const [initialTime, setInitialTime] = useState(dayjs());
     const [search, setSearch] = useState("");
@@ -75,7 +75,7 @@ export default function User() {
                 const loc = data.results[0];
                 setCenter({ lat, lng });
                 setLocationData(loc.formatted_address);
-                setSelectedLoc((prevLoc) => [...prevLoc, {isMandatory: false, loc}]);
+                setSelectedLoc((prevLoc) => [...prevLoc, { isMandatory: false, loc }]);
             })
             .catch((error) => {
                 console.error("Error getting current location:", error);
@@ -99,7 +99,7 @@ export default function User() {
         //const res2 = await axios.post("/api/maps/details",{selectedLoc});
         //console.log(selectedLoc)
         localStorage.setItem('routeData', JSON.stringify(res.data));
-        //router.push(`/newRoute`);
+        router.push(`${params.id}/result`);
     }
 
     function handleDelete(index) {
@@ -219,10 +219,8 @@ export default function User() {
                                     <MarkerF
                                         position={i.loc.geometry.location}
                                     />
-                                ))}
-                            <MarkerF
-                                position={center}
-                            />
+                                ))
+                            }
                         </GoogleMap>
                     ) : (
                         <></>

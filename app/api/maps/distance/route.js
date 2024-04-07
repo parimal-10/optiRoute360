@@ -21,6 +21,33 @@ import { NextResponse } from "next/server";
 //     // { from: 3, to: 2, weight: 10 }
 // ];
 
+function convertToMinutes(timeString) {
+    const regex = /(\d+)\s*(day|hour|min)/g;
+    let totalMinutes = 0;
+
+    let match;
+    while ((match = regex.exec(timeString)) !== null) {
+        const value = parseInt(match[1], 10);
+        const unit = match[2];
+
+        switch (unit) {
+            case 'day':
+                totalMinutes += value * 1440; // 1440 minutes in a day
+                break;
+            case 'hour':
+                totalMinutes += value * 60; // 60 minutes in an hour
+                break;
+            case 'min':
+                totalMinutes += value;
+                break;
+            default:
+                break; // Unrecognized unit, ignore
+        }
+    }
+
+    return totalMinutes;
+}
+
 function findMaxVisitedNodes(nodes, edges) {
     let maxNodesVisited = 0;
     let currentTime = 0;
@@ -115,7 +142,9 @@ export async function POST(req) {
                 name: x.loc.name+" ,"+x.loc.formatted_address,
                 isMandatory: x.isMandatory,
                 closingTime: 1000,
-                waitTime: 10
+                waitTime: 10,
+                lat: x.loc.geometry.location.lat,
+                lng: x.loc.geometry.location.lng
             })
         }
 
@@ -125,13 +154,11 @@ export async function POST(req) {
                     edges.push({
                         from: i,
                         to: j,
-                        weight: parseInt(data.rows[i].elements[j].duration.text.match(/\d+/)[0])
+                        weight: convertToMinutes(data.rows[i].elements[j].duration.text)
                     })
                 }
             }
         }
-
-        // console.log(nodes, edges);
 
         const result = findMaxVisitedNodes(nodes, edges);
 
