@@ -70,22 +70,22 @@ export default function Section1() {
                 >
                     <h1>
                         <span className="block text-6xl text-white bg-clip-text text-transparent">
-                            Connecting Service Providers <br /> with Seekers
+                            
                         </span>
                     </h1>
                     <br />
                     <h2 className="text-2xl text-white">
-                        Find the Right person for the Right work at the Right place
+                        
                     </h2>
                 </div>
                 <Link href="/services">
-                    <button className="absolute z-10 text-white text-xl bg-black rounded-[20px] -translate-y-1/2 -translate-x-1/2 text-center top-2/3 left-1/2 p-3"
+                    {/* <button className="absolute z-10 text-white text-xl bg-black rounded-[20px] -translate-y-1/2 -translate-x-1/2 text-center top-2/3 left-1/2 p-3"
                         style={{
                             opacity: 0.8
                         }}
                     >
-                        Our Services
-                    </button>
+                        
+                    </button> */}
                 </Link>
             </div>
         </>

@@ -24,7 +24,7 @@ const containerStyle = {
 };
 
 export default function User() {
-    const [time, setTime] = useState(dayjs());
+    const [initialTime, setInitialTime] = useState(dayjs());
     const [search, setSearch] = useState("");
     const [dropDown, setDropDown] = useState([]);
     const [locationData, setLocationData] = useState(null);
@@ -53,7 +53,7 @@ export default function User() {
     }, []);
 
     const handleTimeChange = (newValue) => {
-        setTime(newValue);
+        setInitialTime(newValue);
     };
 
     function handleCurrLocation(e) {
@@ -70,8 +70,10 @@ export default function User() {
             .then(({ position, data }) => {
                 const lat = position.coords.latitude;
                 const lng = position.coords.longitude;
+                const loc = data.results[0];
                 setCenter({ lat, lng });
-                setLocationData(data.results[0].formatted_address);
+                setLocationData(result.formatted_address);
+                setSelectedLoc((prevLoc) => [...prevLoc, {isMandatory: false, loc}]);
             })
             .catch((error) => {
                 console.error("Error getting current location:", error);
@@ -84,19 +86,26 @@ export default function User() {
     };
 
     function addLocation(loc) {
-        setSelectedLoc((prevLoc) => [...prevLoc, loc]);
+        setSelectedLoc((prevLoc) => [...prevLoc, {isMandatory: false, loc}]);
         setSearch("")
         setDropDown([])
     }
 
     const findDist = async () => {
         const res = await axios.post("/api/maps/distance", { selectedLoc });
-        console.log(selectedLoc);
-        console.log(res.data);
+        console.log(res.data.rows);
     }
 
-    function handleDelete (index) {
+    function handleDelete(index) {
         setSelectedLoc(prevLoc => prevLoc.filter((_, idx) => idx !== index));
+    };
+
+    const handleCheckOption = (index) => {
+        setSelectedLoc((prevLoc) =>
+            prevLoc.map((loc, i) =>
+                i === index ? { ...loc, isMandatory: !loc.isMandatory } : loc
+            )
+        );
     };
 
     return (
@@ -109,7 +118,7 @@ export default function User() {
                     onChange={handleCurrLocation}
                 />
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <MobileTimePicker value={time} onChange={handleTimeChange} />
+                    <MobileTimePicker value={initialTime} onChange={handleTimeChange} />
                 </LocalizationProvider>
                 <div className="flex flex-col gap-2 relative">
                     <Paper
@@ -168,9 +177,9 @@ export default function User() {
                         </div>
                         {selectedLoc.length > 0 && (
                             <div>
-                                {selectedLoc.map((loc, index) => (
+                                {selectedLoc.map((i, index) => (
                                     <div className="p-2">
-                                        <Typography>{loc.name},{loc.formatted_address}</Typography>
+                                        <Typography>{i.loc.name},{i.loc.formatted_address}</Typography>
                                         <div className="flex gap-2">
                                             <IconButton onClick={() => handleCheckOption(index)}>
                                                 <Checkbox />
@@ -178,6 +187,9 @@ export default function User() {
                                             <IconButton onClick={() => handleDelete(index)}>
                                                 <DeleteIcon />
                                             </IconButton>
+                                            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                                {/* <MobileTimePicker value={time} onChange={handleTimeChange} /> */}
+                                            </LocalizationProvider>
                                         </div>
                                         <hr />
                                     </div>
@@ -197,9 +209,9 @@ export default function User() {
                             onUnmount={onUnmount}
                         >
                             {selectedLoc.length > 0 &&
-                                selectedLoc.map((loc, index) => (
+                                selectedLoc.map((i, index) => (
                                     <MarkerF
-                                        position={loc.geometry.location}
+                                        position={i.loc.geometry.location}
                                     />
                                 ))}
                             <MarkerF
