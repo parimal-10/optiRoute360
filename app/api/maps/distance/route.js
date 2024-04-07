@@ -105,8 +105,6 @@ export async function POST(req) {
             throw new Error('Failed to fetch data from Google Distance Matrix API');
         }
         const data = await response.json();
-        // console.log(data);
-
 
         const nodes = [];
 
@@ -145,7 +143,7 @@ export async function POST(req) {
         console.log("Path:", result.bestPath.slice(0, -1).map(nodeIndex => nodes[nodeIndex].name).join(" -> "));
         console.log("Total time:", result.bestPath[result.bestPath.length - 1], "minutes");
 
-        return NextResponse.json(data);
+        return NextResponse.json({result, nodes});
     } catch (error) {
         console.error('Error fetching data:', error);
         throw error;

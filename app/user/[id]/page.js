@@ -73,7 +73,7 @@ export default function User() {
                 const loc = data.results[0];
                 setCenter({ lat, lng });
                 setLocationData(result.formatted_address);
-                setSelectedLoc((prevLoc) => [...prevLoc, {isMandatory: false, loc}]);
+                setSelectedLoc((prevLoc) => [...prevLoc, { isMandatory: false, loc }]);
             })
             .catch((error) => {
                 console.error("Error getting current location:", error);
@@ -86,14 +86,15 @@ export default function User() {
     };
 
     function addLocation(loc) {
-        setSelectedLoc((prevLoc) => [...prevLoc, {isMandatory: false, loc}]);
+        setSelectedLoc((prevLoc) => [...prevLoc, { isMandatory: false, loc }]);
         setSearch("")
         setDropDown([])
     }
 
     const findDist = async () => {
         const res = await axios.post("/api/maps/distance", { selectedLoc });
-        console.log(res.data.rows);
+        localStorage.setItem('routeData', JSON.stringify(res.data));
+        router.push(`/newRoute`);
     }
 
     function handleDelete(index) {
