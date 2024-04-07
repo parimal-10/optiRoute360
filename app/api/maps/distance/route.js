@@ -93,7 +93,7 @@ export async function POST(req) {
     const { selectedLoc } = await req.json();
     const selectedLocName = [];
     for (let x of selectedLoc) {
-        selectedLocName.push(x.loc.formatted_address)
+        selectedLocName.push(x.loc.name+" ,"+x.loc.formatted_address)
     }
     const originsString = selectedLocName.join('|');
     const destinationsString = selectedLocName.join('|');
@@ -112,7 +112,7 @@ export async function POST(req) {
 
         for (let x of selectedLoc) {
             nodes.push({
-                name: x.loc.formatted_address,
+                name: x.loc.name+" ,"+x.loc.formatted_address,
                 isMandatory: x.isMandatory,
                 closingTime: 1000,
                 waitTime: 10

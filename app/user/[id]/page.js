@@ -72,8 +72,8 @@ export default function User() {
                 const lng = position.coords.longitude;
                 const loc = data.results[0];
                 setCenter({ lat, lng });
-                setLocationData(result.formatted_address);
-                setSelectedLoc((prevLoc) => [...prevLoc, { isMandatory: false, loc }]);
+                setLocationData(loc.formatted_address);
+                setSelectedLoc((prevLoc) => [...prevLoc, {isMandatory: false, loc}]);
             })
             .catch((error) => {
                 console.error("Error getting current location:", error);
