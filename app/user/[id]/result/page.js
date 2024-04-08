@@ -29,8 +29,13 @@ export default function Result() {
             const newPath = data.result.bestPath.slice(0, -1).map(i => data.nodes[i].name);
             setFinalPath(newPath);
         }
-        calculateRoute();
     }, []);
+
+    useEffect(() => {
+        if (finalpath.length > 1) {
+            calculateRoute();
+        }
+    }, [finalpath]);
 
     const { isLoaded } = useJsApiLoader({
         id: "google-map-script",
