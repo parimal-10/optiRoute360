@@ -6,9 +6,11 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Box from "@mui/material/Box"; // Import Box component for layout
 import { GoogleMap, useJsApiLoader, MarkerF, DirectionsRenderer } from "@react-google-maps/api";
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 
 const containerStyle = {
-    width: "1100px",
+    width: "100%",
     height: "600px",
 };
 
@@ -29,6 +31,7 @@ export default function Result() {
             const newPath = data.result.bestPath.slice(0, -1).map(i => data.nodes[i].name);
             setFinalPath(newPath);
         }
+        calculateRoute()
     }, []);
 
     useEffect(() => {
@@ -100,19 +103,37 @@ export default function Result() {
         setdirectionResponse(directionsResponses);
     }
 
-    function handlePath() {
-        setPath(prevPath => {
-            // Ensure we don't exceed the number of paths available
-            const newPathIndex = prevPath + 1 < directionResponse.length ? prevPath + 1 : 0;
-            return newPathIndex;
-        });
+    function handlePath(inc) {
+        if (inc) {
+            setPath(prevPath => {
+                const newPathIndex = prevPath + 1 < directionResponse.length ? prevPath + 1 : prevPath;
+                return newPathIndex;
+            });
+        }
+        else {
+            setPath(prevPath => {
+                const newPathIndex = prevPath - 1 >= 0 ? prevPath - 1 : prevPath;
+                return newPathIndex;
+            });
+        }
     }
 
     return (
         <div>
+            <div className="flex justify-between px-10 py-5 cursor-pointer">
+                <div className="bg-blue-500 p-2 rounded-lg text-white content-center items-center justify-center" onClick={() => handlePath(false)}>
+                    <ArrowBackIosIcon />
+                    Prev
+                </div>
+                <div className="bg-blue-500 p-2 rounded-lg text-white" onClick={() => handlePath(true)}>
+                    Next
+                    <ArrowForwardIosIcon />
+                </div>
+            </div>
+
             <div className="flex flex-wrap gap-5 items-start justify-center">
                 {resultData && resultData.result.bestPath.slice(0, -1).map((nodeIndex, index) => (
-                    <Card key={index} className="mb-4 w-full max-w-md bg-gray-50 shadow-lg h-auto min-h-36 flex flex-col justify-between">
+                    <Card key={index} className={`mb-4 w-full max-w-md ${(index === path || index === path + 1) ? 'bg-gray-300' : 'bg-gray-50'} shadow-lg h-auto min-h-36 flex flex-col justify-between`}>
                         <CardContent>
                             <Typography gutterBottom variant="h5" component="div">
                                 Step {index + 1}
@@ -123,19 +144,25 @@ export default function Result() {
                         </CardContent>
                     </Card>
                 ))}
-            </div>
+                {/* Draw directed links */}
+                {resultData && resultData.result.bestPath.slice(0, -1).map((nodeIndex, index) => {
+                    if (index < resultData.result.bestPath.length - 1) {
+                        // Calculate positions
+                        const startX = index * 300 + 150;
+                        const startY = 200;
+                        const endX = (index + 1) * 300 + 150;
+                        const endY = 200;
 
-            <Box mt={4} p={2} className="bg-blue-100 rounded-lg">
-                <Typography variant="h6" gutterBottom>
-                    Summary
-                </Typography>
-                <Typography variant="body1">
-                    Maximum Destinations Visited: {resultData && resultData.result.maxNodesVisited - 1}
-                </Typography>
-                <Typography variant="body1">
-                    Mandatory Destinations Visited: {resultData && `${resultData.result.maxMandatoryVisited}/${resultData.nodes.filter(node => node.isMandatory).length}`}
-                </Typography>
-            </Box>
+                        // Draw SVG line
+                        return (
+                            <svg key={index} className="absolute" style={{ top: '50px', zIndex: -1 }}>
+                                <line x1={startX} y1={startY} x2={endX} y2={endY} stroke="black" strokeWidth="2" />
+                                <polygon points={`${endX},${endY} ${endX - 10},${endY - 5} ${endX - 10},${endY + 5}`} fill="black" />
+                            </svg>
+                        );
+                    }
+                })}
+            </div>
 
             {isLoaded ? (
                 <>
@@ -155,7 +182,19 @@ export default function Result() {
             ) : (
                 <></>
             )}
-            <button onClick={handlePath}>Next</button>
+
+            <Box mt={4} p={2} className="bg-blue-100 rounded-lg">
+                <Typography variant="h6" gutterBottom>
+                    Summary
+                </Typography>
+                <Typography variant="body1">
+                    Maximum Destinations Visited: {resultData && resultData.result.maxNodesVisited - 1}
+                </Typography>
+                <Typography variant="body1">
+                    Mandatory Destinations Visited: {resultData && `${resultData.result.maxMandatoryVisited}/${resultData.nodes.filter(node => node.isMandatory).length}`}
+                </Typography>
+            </Box>
+
         </div>
     );
 }
