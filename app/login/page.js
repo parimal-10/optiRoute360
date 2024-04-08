@@ -42,7 +42,7 @@ export default function Login() {
   async function handleSubmit(event) {
     event.preventDefault();
     try {
-      const resp = await axios.post("/api/users/login", user);
+      // const resp = await axios.post("/api/users/login", user);
       console.log("Login Successful");
       router.push("/user/test");
     } catch (error) {

@@ -18,13 +18,14 @@ import { Grid } from "@mui/material";
 import Checkbox from '@mui/material/Checkbox';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useRouter } from "next/navigation";
+import { MobileDateTimePicker } from '@mui/x-date-pickers/MobileDateTimePicker';
 
 const containerStyle = {
     width: "1100px",
     height: "600px",
 };
 
-export default function User( { params } ) {
+export default function User({ params }) {
     const router = useRouter();
     const [initialTime, setInitialTime] = useState(dayjs());
     const [search, setSearch] = useState("");
@@ -75,7 +76,7 @@ export default function User( { params } ) {
                 const loc = data.results[0];
                 setCenter({ lat, lng });
                 setLocationData(loc.formatted_address);
-                setSelectedLoc((prevLoc) => [...prevLoc, { isMandatory: false, loc }]);
+                setSelectedLoc((prevLoc) => [...prevLoc, { isMandatory: false, loc, time: initialTime, waitTime: 0 }]);
             })
             .catch((error) => {
                 console.error("Error getting current location:", error);
@@ -88,16 +89,15 @@ export default function User( { params } ) {
     };
 
     function addLocation(loc) {
-        setSelectedLoc((prevLoc) => [...prevLoc, { isMandatory: false, loc }]);
+        setSelectedLoc((prevLoc) => [...prevLoc, { isMandatory: false, loc, time: dayjs(), waitTime: 45 }]);
         setSearch("")
         setDropDown([])
     }
 
     const findDist = async () => {
-        const res = await axios.post("/api/maps/distance", { selectedLoc });
-        //const place_id = selectedLoc.loc.place_id;
-        //const res2 = await axios.post("/api/maps/details",{selectedLoc});
-        //console.log(selectedLoc)
+        // console.log({ initialTime, selectedLoc });
+        const res = await axios.post("/api/maps/distance", { initialTime, selectedLoc });
+        console.log(res);
         localStorage.setItem('routeData', JSON.stringify(res.data));
         router.push(`${params.id}/result`);
     }
@@ -114,6 +114,22 @@ export default function User( { params } ) {
         );
     };
 
+    const handleTimeChangeDest = (newValue, index) => {
+        setSelectedLoc((prevLoc) =>
+            prevLoc.map((item, idx) =>
+                idx === index ? { ...item, time: newValue } : item
+            )
+        );
+    };
+
+    const handleWaitingTimeChange = (newValue, index) => {
+        setSelectedLoc((prevLoc) =>
+            prevLoc.map((item, idx) =>
+                idx === index ? { ...item, waitTime: newValue } : item
+            )
+        );
+    }
+
     return (
         <>
             <div className="flex gap-10 my-5 items-center mx-10">
@@ -124,7 +140,9 @@ export default function User( { params } ) {
                     onChange={handleCurrLocation}
                 />
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <MobileTimePicker value={initialTime} onChange={handleTimeChange} />
+                    <MobileDateTimePicker
+                        value={initialTime} onChange={handleTimeChange}
+                    />
                 </LocalizationProvider>
                 <div className="flex flex-col gap-2 relative">
                     <Paper
@@ -184,6 +202,7 @@ export default function User( { params } ) {
                         {selectedLoc.length > 0 && (
                             <div>
                                 {selectedLoc.map((i, index) => (
+                                    index !== 0 &&
                                     <div className="p-2">
                                         <Typography>{i.loc.name},{i.loc.formatted_address}</Typography>
                                         <div className="flex gap-2">
@@ -194,8 +213,18 @@ export default function User( { params } ) {
                                                 <DeleteIcon />
                                             </IconButton>
                                             <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                                {/* <MobileTimePicker value={time} onChange={handleTimeChange} /> */}
+                                                <MobileDateTimePicker
+                                                    value={i.time} onChange={(newValue) => handleTimeChangeDest(newValue, index)}
+                                                />
                                             </LocalizationProvider>
+                                            <TextField
+                                                id="filled-basic"
+                                                variant="filled"
+                                                value={i.waitTime}
+                                                onChange={(e) => handleWaitingTimeChange(Number(e.target.value), index)}
+                                                type="number"
+                                                inputProps={{ min: 0 }}
+                                            />
                                         </div>
                                         <hr />
                                     </div>

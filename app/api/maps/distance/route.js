@@ -21,6 +21,21 @@ import { NextResponse } from "next/server";
 //     // { from: 3, to: 2, weight: 10 }
 // ];
 
+function getTimeDifferenceInMinutes(time1, time2) {
+    // Parse date strings into Date objects
+    const date1 = new Date(time1);
+    const date2 = new Date(time2);
+
+    // Calculate the difference in milliseconds
+    const differenceInMilliseconds = date2 - date1;
+
+    // Convert milliseconds to minutes
+    const differenceInMinutes = Math.floor(differenceInMilliseconds / (1000 * 60));
+
+    // Return the difference in minutes
+    return differenceInMinutes;
+}
+
 function convertToMinutes(timeString) {
     const regex = /(\d+)\s*(day|hour|min)/g;
     let totalMinutes = 0;
@@ -37,7 +52,7 @@ function convertToMinutes(timeString) {
             case 'hour':
                 totalMinutes += value * 60; // 60 minutes in an hour
                 break;
-            case 'min':
+            case 'min0':
                 totalMinutes += value;
                 break;
             default:
@@ -117,10 +132,10 @@ function findMaxVisitedNodes(nodes, edges) {
 // console.log("Total time:", result.bestPath[result.bestPath.length - 1], "minutes");
 
 export async function POST(req) {
-    const { selectedLoc } = await req.json();
+    const { initialTime, selectedLoc } = await req.json();
     const selectedLocName = [];
     for (let x of selectedLoc) {
-        selectedLocName.push(x.loc.name+" ,"+x.loc.formatted_address)
+        selectedLocName.push(x.loc.name + " ," + x.loc.formatted_address)
     }
     const originsString = selectedLocName.join('|');
     const destinationsString = selectedLocName.join('|');
@@ -132,33 +147,54 @@ export async function POST(req) {
             throw new Error('Failed to fetch data from Google Distance Matrix API');
         }
         const data = await response.json();
-        //console.log(data);
+        // console.log(data);
         const nodes = [];
 
         const edges = [];
 
-        for (let x of selectedLoc) {
+        for (let i = 0; i < selectedLoc.length; i++) {
+            const x = selectedLoc[i];
+            console.log(x.time);
+            let closingTime;
+            if (i === 0) {
+                closingTime = Number.MAX_SAFE_INTEGER;
+            } else {
+                closingTime = getTimeDifferenceInMinutes(initialTime, x.time);
+            }
             nodes.push({
-                name: x.loc.name+" ,"+x.loc.formatted_address,
+                name: x.loc.name + " ," + x.loc.formatted_address,
                 isMandatory: x.isMandatory,
-                closingTime: 1000,
-                waitTime: 10,
-                lat: x.loc.geometry.location.lat,
-                lng: x.loc.geometry.location.lng
-            })
+                closingTime: closingTime,
+                waitTime: x?.waitTime,
+                loc: {
+                    lat: x.loc.geometry.location.lat,
+                    lng: x.loc.geometry.location.lng
+                }
+            });
         }
 
         for (let i = 0; i < data.rows.length; i++) {
             for (let j = 0; j < data.rows[i].elements.length; j++) {
                 if (i != j) {
+                    const durationElement = data.rows[i].elements[j];
+                    console.log(durationElement);
+                    let weight;
+                    if (durationElement.status === "OK" && durationElement.duration && durationElement.duration.text) {
+                        weight = convertToMinutes(durationElement.duration.text);
+                    } else {
+                        weight = Number.MAX_SAFE_INTEGER;
+                    }
+                    console.log(weight);
                     edges.push({
                         from: i,
                         to: j,
-                        weight: convertToMinutes(data.rows[i].elements[j].duration.text)
+                        weight: weight
                     })
                 }
             }
         }
+
+        console.log(nodes);
 
         const result = findMaxVisitedNodes(nodes, edges);
 
@@ -170,7 +206,7 @@ export async function POST(req) {
         console.log("Path:", result.bestPath.slice(0, -1).map(nodeIndex => nodes[nodeIndex].name).join(" -> "));
         console.log("Total time:", result.bestPath[result.bestPath.length - 1], "minutes");
 
-        return NextResponse.json({result, nodes});
+        return NextResponse.json({ result, nodes });
     } catch (error) {
         console.error('Error fetching data:', error);
         throw error;
