@@ -2,7 +2,7 @@ export async function getCurrentLocation() {
   const options = {
     enableHighAccuracy: true,
     timeout: 5000,
-    maximumAge: 0,
+    maximumAge: 0
   };
   return new Promise((resolve, reject) => {
     navigator.geolocation.getCurrentPosition(
@@ -15,7 +15,7 @@ export async function getCurrentLocation() {
             throw new Error('Failed to fetch data from reverse geocoding API');
           }
           const data = await response.json();
-          resolve({position,data});
+          resolve({ position, data });
         } catch (error) {
           reject(error);
         }

@@ -7,7 +7,6 @@ import SearchIcon from "@mui/icons-material/Search";
 import dayjs from "dayjs";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { MobileTimePicker } from "@mui/x-date-pickers/MobileTimePicker";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { getCurrentLocation } from "@/utils/getCurrentLocation";
@@ -30,7 +29,7 @@ export default function User({ params }) {
     const [initialTime, setInitialTime] = useState(dayjs());
     const [search, setSearch] = useState("");
     const [dropDown, setDropDown] = useState([]);
-    const [locationData, setLocationData] = useState(null);
+    const [locationData, setLocationData] = useState("");
     const [center, setCenter] = useState({
         lat: 0,
         lng: 0,
