@@ -30,6 +30,7 @@ export default function User({ params }) {
     const [initialTime, setInitialTime] = useState(dayjs());
     const [search, setSearch] = useState("");
     const [dropDown, setDropDown] = useState([]);
+    const [dropDown2,setDropDown2] = useState([]);
     const [locationData, setLocationData] = useState(null);
     const [center, setCenter] = useState({
         lat: 0,
@@ -62,6 +63,7 @@ export default function User({ params }) {
     function handleCurrLocation(e) {
         e.preventDefault();
         setLocationData(e.target.value);
+        setSearch(e.target.value);
     }
 
     const handleSearchChange = (e) => {
@@ -130,14 +132,29 @@ export default function User({ params }) {
         );
     }
 
+    const userLocation = async()=>{
+        //setSearch(locationData);
+        console.log(center)
+        console.log(search);
+        if(search===locationData){
+            const res = await axios.post("/api/maps/search", { center, search });
+            setDropDown2(res.data.results);
+        }
+    }
+
     return (
         <>
             <div className="flex gap-10 my-5 items-center mx-10">
                 <TextField
+                component="form"
                     id="filled-basic"
                     variant="filled"
                     value={locationData}
                     onChange={handleCurrLocation}
+                    onSubmit={(e) => {
+                        e.preventDefault();
+                        userLocation();
+                    }}
                 />
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <MobileDateTimePicker
