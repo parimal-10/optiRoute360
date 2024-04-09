@@ -21,8 +21,8 @@ import { useRouter } from "next/navigation";
 import { MobileDateTimePicker } from '@mui/x-date-pickers/MobileDateTimePicker';
 
 const containerStyle = {
-    width: "1100px",
-    height: "600px",
+    width: "100%",
+    height: "80vh",
 };
 
 export default function User({ params }) {
@@ -48,7 +48,6 @@ export default function User({ params }) {
     const onLoad = React.useCallback(function callback(map) {
         const bounds = new window.google.maps.LatLngBounds(center);
         map.fitBounds(bounds);
-
         setMap(map);
     }, []);
 
@@ -94,14 +93,16 @@ export default function User({ params }) {
         setSelectedLoc((prevLoc) => [...prevLoc, { isMandatory: false, loc, time: dayjs(), waitTime: 45 }]);
         setSearch("")
         setDropDown([])
+        setCenter(loc.geometry.location)
     }
 
     const findDist = async () => {
-        // console.log({ initialTime, selectedLoc });
-        const res = await axios.post("/api/maps/distance", { initialTime, selectedLoc });
-        console.log(res);
-        localStorage.setItem('routeData', JSON.stringify(res.data));
-        router.push(`${params.id}/result`);
+        if (selectedLoc.length > 1) {
+            const res = await axios.post("/api/maps/distance", { initialTime, selectedLoc });
+            console.log(res);
+            localStorage.setItem('routeData', JSON.stringify(res.data));
+            router.push(`${params.id}/result`);
+        }
     }
 
     function handleDelete(index) {
@@ -149,16 +150,21 @@ export default function User({ params }) {
                 component="form"
                     id="filled-basic"
                     variant="filled"
+                    label="Initial Location"
                     value={locationData}
                     onChange={handleCurrLocation}
                     onSubmit={(e) => {
                         e.preventDefault();
                         userLocation();
                     }}
+                    type="text"
+                    InputLabelProps={{
+                        shrink: true,
+                    }}
                 />
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <MobileDateTimePicker
-                        value={initialTime} onChange={handleTimeChange}
+                        value={initialTime} onChange={handleTimeChange} label="Starting Date Time"
                     />
                 </LocalizationProvider>
                 <div className="flex flex-col gap-2 relative">
@@ -221,27 +227,28 @@ export default function User({ params }) {
                                 {selectedLoc.map((i, index) => (
                                     index !== 0 &&
                                     <div className="p-2">
-                                        <Typography>{i.loc.name},{i.loc.formatted_address}</Typography>
+                                        <Typography className="mb-2">{i.loc.name},{i.loc.formatted_address}</Typography>
                                         <div className="flex gap-2">
                                             <IconButton onClick={() => handleCheckOption(index)}>
                                                 <Checkbox />
                                             </IconButton>
-                                            <IconButton onClick={() => handleDelete(index)}>
-                                                <DeleteIcon />
-                                            </IconButton>
                                             <LocalizationProvider dateAdapter={AdapterDayjs}>
                                                 <MobileDateTimePicker
-                                                    value={i.time} onChange={(newValue) => handleTimeChangeDest(newValue, index)}
+                                                    value={i.time} onChange={(newValue) => handleTimeChangeDest(newValue, index)} label="Reach Before"
                                                 />
                                             </LocalizationProvider>
                                             <TextField
                                                 id="filled-basic"
                                                 variant="filled"
                                                 value={i.waitTime}
+                                                label="Waiting time"
                                                 onChange={(e) => handleWaitingTimeChange(Number(e.target.value), index)}
                                                 type="number"
                                                 inputProps={{ min: 0 }}
                                             />
+                                            <IconButton onClick={() => handleDelete(index)}>
+                                                <DeleteIcon />
+                                            </IconButton>
                                         </div>
                                         <hr />
                                     </div>
@@ -256,8 +263,8 @@ export default function User({ params }) {
                         <GoogleMap
                             mapContainerStyle={containerStyle}
                             center={center}
-                            zoom={9}
                             onLoad={onLoad}
+                            zomm={13}
                             onUnmount={onUnmount}
                         >
                             {selectedLoc.length > 0 &&
