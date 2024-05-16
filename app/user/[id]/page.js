@@ -25,11 +25,12 @@ const style = {
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
-  width: 400,
+  width: 600,
   bgcolor: "background.paper",
   border: "2px solid #000",
   boxShadow: 24,
-  p: 4,
+  p: 4, 
+  height: 600,
 };
 
 const containerStyle = {
@@ -174,44 +175,55 @@ export default function User({ params }) {
         aria-describedby="modal-modal-description"
       >
         <Box sx={style}>
-          <Typography id="modal-modal-title" variant="h6" component="h2">
-            Text in a modal
-          </Typography>
-          <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-            Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-          </Typography>
+          <div className="flex flex-col gap-2 relative">
+            <TextField
+              component="form"
+              id="filled-basic"
+              variant="filled"
+              label="Set Starting Location"
+              value={locationData}
+              onChange={handleCurrLocation}
+              onSubmit={(e) => {
+                e.preventDefault();
+                userLocation();
+              }}
+              InputLabelProps={{
+                shrink: true,
+              }}
+            />
+            <div className="top-full z-10 bg-white mt-2 rounded-lg shadow-xl h-96">
+              {locDropDown.length > 0 &&
+                locDropDown.slice(0, 10).map((loc, index) => (
+                  <div className="px-3 py-1 hover:bg-gray-200 cursor-pointer">
+                    <Typography onClick={() => addLocation(loc)}>
+                      {loc.name}, {loc.formatted_address}
+                    </Typography>
+                  </div>
+                ))}
+            </div>
+          </div>
         </Box>
       </Modal>
+
       <div className="flex gap-10 my-5 items-center mx-10">
-        <div className="flex flex-col gap-2 relative">
-          <TextField
-            component="form"
-            id="filled-basic"
-            variant="filled"
-            label="Initial Location"
-            value={locationData}
-            onChange={handleCurrLocation}
-            onSubmit={(e) => {
-              e.preventDefault();
-              userLocation();
-            }}
-            onClick={() => setOpen(true)}
-            // type="text"
-            InputLabelProps={{
-              shrink: true,
-            }}
-          />
-          <div className="absolute top-full z-10 bg-white mt-2 rounded-lg shadow-xl">
-            {locDropDown.length > 0 &&
-              locDropDown.slice(0, 10).map((loc, index) => (
-                <div className="px-3 py-1 hover:bg-gray-200 cursor-pointer">
-                  <Typography onClick={() => addLocation(loc)}>
-                    {loc.name}
-                  </Typography>
-                </div>
-              ))}
-          </div>
-        </div>
+        <TextField
+          component="form"
+          id="filled-basic"
+          variant="filled"
+          label="Initial Location"
+          value={locationData}
+          onChange={handleCurrLocation}
+          onSubmit={(e) => {
+            e.preventDefault();
+            userLocation();
+          }}
+          onClick={() => setOpen(true)}
+          // type="text"
+          InputLabelProps={{
+            shrink: true,
+          }}
+        />
+
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <MobileDateTimePicker
             value={initialTime}
