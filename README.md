@@ -1,36 +1,88 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# OptiRoute360 - Innovative Route Optimization and Travel Efficiency Platform
 
-## Getting Started
+OptiRoute360 serves as the ultimate one stop solution for efficient route planning and optimization. Recognizing the importance of time, we aim to streamline your travel experience, whether it's for work,leisure, or daily errands.
 
-First, run the development server:
+# Innovation
+
+We've pioneered a cutting-edge algorithm designed to calculate the most-efficient routes possible. By combining advanced algorithms with intuitive user interfaces, OptiRoute360 ensures that you reach your destination in the shortest time with minimum hassle.
+
+## Tech Stack
+
+- Nodejs
+- Nextjs
+- Tailwind CSS/MUI
+- Cloudinary
+- Vercel
+
+## 🚀 Features
+
+1. **Optimal Route Algorithm:**
+
+   - An advanced algorithm that computes the most efficient route while considering wait times, closing times, and mandatory visits.
+
+2. **Integrated APIs:**
+
+   - Uses Places, Directions, and Distance Matrix API to provide real-time data for accurate and dynamic routing.
+
+3. **Place Suggestions:**
+
+   - Leverages the Google Maps API to provide users with intelligent place suggestions based on their inputs, making it easier to find and add destinations to their routes.
+
+4. **Google Maps Integration:**
+
+   - Displays the final optimized route on Google Maps, making it easier for users to visualize and follow their route.
+
+5. **Real-time Updates:**
+
+   - Provides real-time updates on route changes, traffic conditions, and estimated times of arrival.
+
+6. **Scalability:**
+
+   - Designed to handle a large number of simultaneous users and extensive route calculations without compromising performance.
+
+## 📷 Photos
+
+<table>
+  <tr>
+    <td><img maxW="50%" src="https://raw.githubusercontent.com/PranavBansal21/WorkHarbor-and-OptiRoute_Helper/main/OptiRoute/1.png"  /></td>
+    <td><img maxW="50%" src="https://raw.githubusercontent.com/PranavBansal21/WorkHarbor-and-OptiRoute_Helper/main/OptiRoute/2.png"   /></td>
+  </tr>
+  <tr>
+   <td><img src="https://raw.githubusercontent.com/PranavBansal21/WorkHarbor-and-OptiRoute_Helper/main/OptiRoute/3.png"  /></td>
+    <td><img src="https://raw.githubusercontent.com/PranavBansal21/WorkHarbor-and-OptiRoute_Helper/main/OptiRoute/4.png" /></td>
+  </tr>
+  <tr>
+    <td><img src="https://raw.githubusercontent.com/PranavBansal21/WorkHarbor-and-OptiRoute_Helper/main/OptiRoute/5.png"  /></td>
+    <td><img src="https://raw.githubusercontent.com/PranavBansal21/WorkHarbor-and-OptiRoute_Helper/main/OptiRoute/6.png"  /></td>
+  </tr>
+</table>
+
+## Dependencies
+
+You need npm/yarn installed in your local machine in order to run this app.
+
+## Installation
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+  npm install
+  npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## How To Setup
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+- Make sure your machine is having internet connection.
+- Open shell (which ever your OS support) on your PC.
+- Change drive to the location where you want your project to be copied.
+- Clone it to your local setup by using command git clone `<repo link>`.
+- Once cloned, Run the following command in the root directory of the project `npm install`.
+- Make sure you have required enviornment variables saved in the `.env` file in the root of the project. A file `.env.example` is attached for reference.
+- After the process is completed, run the command `npm run dev`.
+- The backend will be live on `localhost:3000`.
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+## Reference Links
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+- [Download and install the latest version of Git.](https://git-scm.com/downloads)
+- [Setup Nodejs](https://nodejs.org/en/blog/release/v16.18.1/)
+- [Nextjs](https://nextjs.org/docs)
+- [Cloudinary Documentation](https://cloudinary.com/documentation)
+- [Get started with Material UI](https://mui.com/material-ui/getting-started/)
