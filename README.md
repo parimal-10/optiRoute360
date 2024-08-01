@@ -11,8 +11,6 @@ We've pioneered a cutting-edge algorithm designed to calculate the most-efficien
 - Nodejs
 - Nextjs
 - Tailwind CSS/MUI
-- Cloudinary
-- Vercel
 
 ## 🚀 Features
 
@@ -83,6 +81,5 @@ You need npm/yarn installed in your local machine in order to run this app.
 
 - [Download and install the latest version of Git.](https://git-scm.com/downloads)
 - [Setup Nodejs](https://nodejs.org/en/blog/release/v16.18.1/)
-- [Nextjs](https://nextjs.org/docs)
-- [Cloudinary Documentation](https://cloudinary.com/documentation)
+- [Nextjs](https://nextjs.org/docs) -[Google Maps Api](https://developers.google.com/maps/documentation) -[Travelling SalesMan Problem](https://www.geeksforgeeks.org/travelling-salesman-problem-using-dynamic-programming/)
 - [Get started with Material UI](https://mui.com/material-ui/getting-started/)
